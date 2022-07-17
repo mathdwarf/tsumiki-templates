@@ -16,8 +16,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
-    limiter = Limiter(app, key_func=get_remote_address, default_limits=["100/day;50/hour;10/minute;1/second"])
-    limiter.limit("100/day;50/hour;10/minute;1/second")
+    limiter = Limiter(app, key_func=get_remote_address, default_limits=["1000/day;500/hour;100/minute;10/second"])
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
