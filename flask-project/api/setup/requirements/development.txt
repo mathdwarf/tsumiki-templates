@@ -1,0 +1,5 @@
+# requirements for development
+-r common.txt
+
+pytest==7.0.1
+pytest-cov==3.0.0
