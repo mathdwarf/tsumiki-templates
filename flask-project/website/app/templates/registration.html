@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+  </head>
+  <body>
+    <div style="margin: 5px;">
+      <div><span>E-Mail : </span><input type="email" id="email" /></div>
+      <div><span>name : </span><input type="text" id="name" /></div>
+      <div><span>Password : </span><input type="password" id="password" /></div>
+      <div><button id="registBtn" style="margin: 5px;">Registration</button></div>
+      <div><a href="{{url_for('auth.login')}}" style="margin: 5px;">Move to login page.</a></div>
+    </div>
+    <script>
+      const email = document.getElementById('email');
+      const name = document.getElementById('name');
+      const registBtn  = document.getElementById('registBtn');
+
+      function register() {
+        let fData = new FormData();
+        fData.append('email', email.value);
+        fData.append('name', name.value);
+        fData.append('password', password.value);
+        
+        fetch("{{url_for('auth.register')}}", {
+          method: 'POST',
+          headers: {},
+          body: fData
+        }).then(response => {
+          if (response.url != '') {
+            window.location.href = response.url;
+          }
+          else {
+            alert('Error', 'Occuring some error on register process.');
+          }
+        }).catch(
+          error => console.log(error)
+        );
+      }
+      registBtn.addEventListener('click', register);
+    </script>
+  </body>
+</html>

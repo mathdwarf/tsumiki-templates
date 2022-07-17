@@ -1,0 +1,11 @@
+# requirements for all environments
+python-dotenv
+flask
+flask_cors
+Flask-Limiter
+waitress
+
+flask-login
+flask-bcrypt
+
+Flask-SQLAlchemy
