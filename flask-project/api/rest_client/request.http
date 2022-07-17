@@ -1,0 +1,22 @@
+# If using each command in this file, you need the extension "REST Client" on Visual Studio Code.
+
+POST http://localhost:5001/template/post
+Authorization: token PcwxgkfEP9xFBwHSCXQHaganSdjjmTGS
+Content-Type: multipart/form-data; boundary=----8fGjd595mVgUK9sMY5AMmT82sunURpaZ
+
+------8fGjd595mVgUK9sMY5AMmT82sunURpaZ
+
+Content-Disposition: form-data; name="file"; filename="01.jpg"
+Content-Type: application/octet-stream
+
+< ./01.jpg
+
+------8fGjd595mVgUK9sMY5AMmT82sunURpaZ--
+
+###
+
+POST http://localhost:5001/template/post
+Authorization: token PcwxgkfEP9xFBwHSCXQHaganSdjjmTGS
+Content-Type: multipart/form-data; boundary=----8fGjd595mVgUK9sMY5AMmT82sunURpaZ
+
+------8fGjd595mVgUK9sMY5AMmT82sunURpaZ--
