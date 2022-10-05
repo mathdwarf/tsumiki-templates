@@ -1,5 +1,13 @@
 # If using each command in this file, you need the extension "REST Client" on Visual Studio Code.
 
+GET http://localhost:5001/template/get
+
+###
+
+GET http://localhost:5001/template/get?param01=param01value&param02=param02value
+
+###
+
 POST http://localhost:5001/template/post-json
 Authorization: token PcwxgkfEP9xFBwHSCXQHaganSdjjmTGS
 Content-Type: application/json
