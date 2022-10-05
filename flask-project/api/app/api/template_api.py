@@ -9,28 +9,27 @@ from werkzeug.exceptions import \
 template_api = Blueprint('template_api', __name__, url_prefix='/template')
 CORS(template_api)
 
-@template_api.route("/post", methods=["POST"])
-def process_with_post_file():
+@template_api.route("/post-files", methods=["POST"])
+def post_files():
     logger.info(request)
     
     response_json = '{}'
     status_code = 200
-    
+
     try:
         if request.method != 'POST':
-            raise MethodNotAllowed('Method \'POST\' is invalid.')
-        
+            raise MethodNotAllowed('Method is not allowed.')
+
         files = request.files.getlist('file')
         if len(files) <= 0:
             raise BadRequest('No uploaded file.')
-        if not files[0] or not files[0].filename:
-            raise BadRequest('Uploaded file is incorrect.')
         
         try:
-            # 
-            # The API functions body is coding here.
-            # 
-            pass
+            for file in files:
+                logger.info(file.filename)
+                # 
+                # The API functions body is coding here.
+                # 
         
         except Exception as e:
             logger.error(f'Internal process was failed : {str(e)}')
