@@ -7,11 +7,13 @@
   </head>
   <body>
     <div style="margin: 5px;">
-      <div><span>E-Mail : </span><input type="text" id="email" /></div>
-      <div><span>Password : </span><input type="password" id="password" /></div>
-      <div><button id="loginBtn" style="margin: 5px;">Login</button></div>
-      <div><!--<a href="" style="margin: 5px;">-->Forgot password.<!--</a>--></div>
-      <div><a href="{{url_for('auth.register')}}" style="margin: 5px;">Move to user registration page.</a></div>
+      <form action="javascript:login()">
+        <div><span>    E-Mail : </span><input type="text" id="email" /></div>
+        <div><span>    Password : </span><input type="password" id="password" /></div>
+        <div><button id="loginBtn" style="margin: 5px;">Login</button></div>
+      </form>
+      <!--<div><a href="" style="margin: 5px;">Forgot password.</a></div>-->
+      <div><a href="{{url_for('auth.register')}}" style="margin: 5px;">Sign up.</a></div>
     </div>
     <script>
       const email = document.getElementById('email');
@@ -19,26 +21,30 @@
       const loginBtn  = document.getElementById('loginBtn');
 
       function login() {
-        let fData = new FormData();
-        fData.append('email', email.value);
-        fData.append('password', password.value);
-        
-        fetch("{{url_for('auth.login')}}", {
-          method: 'POST',
-          headers: {},
-          body: fData
-        }).then(response => {
-          if (response.url != '') {
-            window.location.href = response.url;
-          }
-          else {
-            alert('Error', 'Occuring some error on login process.');
-          }
-        }).catch(
-          error => console.log(error)
-        );
+        if ((email.value !== '') && (password.value !== '')) {
+          let fData = new FormData();
+          fData.append('email', email.value);
+          fData.append('password', password.value);
+          
+          fetch("{{url_for('auth.login')}}", {
+            method: 'POST',
+            headers: {},
+            body: fData
+          }).then(response => {
+            if (response.url != '') {
+              window.location.href = response.url;
+            }
+            else {
+              alert('Occuring some error on login process.', 'Error is happen!');
+            }
+          }).catch(error => {
+            alert('Occuring some error on login process.', 'Error is happen!');
+          });
+        }
+        else {
+          alert('Please input E-Mail address and password.', 'Caution!');
+        }
       }
-      loginBtn.addEventListener('click', login);
     </script>
   </body>
 </html>
