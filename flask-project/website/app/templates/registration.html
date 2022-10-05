@@ -7,18 +7,35 @@
   </head>
   <body>
     <div style="margin: 5px;">
-      <div><span>E-Mail : </span><input type="email" id="email" /></div>
-      <div><span>name : </span><input type="text" id="name" /></div>
-      <div><span>Password : </span><input type="password" id="password" /></div>
-      <div><button id="registBtn" style="margin: 5px;">Registration</button></div>
+      <form action="javascript:register()">
+        <div><span>E-Mail : </span><input type="email" id="email" /></div>
+        <div><span>name : </span><input type="text" id="name" /></div>
+        <div><span>Password : </span><input type="password" id="password" /></div>
+        <div><span>Confirm Password : </span><input type="password" id="confirm" /></div>
+        <div><button id="registBtn" style="margin: 5px;">Registration</button></div>
+      </form>
       <div><a href="{{url_for('auth.login')}}" style="margin: 5px;">Move to login page.</a></div>
     </div>
     <script>
       const email = document.getElementById('email');
       const name = document.getElementById('name');
+      const password = document.getElementById('password');
+      const confirm = document.getElementById('confirm');
       const registBtn  = document.getElementById('registBtn');
 
       function register() {
+        if ((email.value === '') || (name.value === '') || (password.value === '')) {
+          alert('Please input E-Mail address and name, password.', 'Caution!');
+          return
+        }
+        if (confirm.value === '') {
+          alert('Please input password for confirm.', 'Caution!');
+          return
+        }
+        if (password.value !== confirm.value) {
+          alert('Password and confirm password is not match.', 'Caution!');
+          return
+        }
         let fData = new FormData();
         fData.append('email', email.value);
         fData.append('name', name.value);
@@ -31,15 +48,15 @@
         }).then(response => {
           if (response.url != '') {
             window.location.href = response.url;
+            alert('Registering your account is completed!', 'Completed!');
           }
           else {
-            alert('Error', 'Occuring some error on register process.');
+            alert('Occuring some error on register process.', 'Error is happen!');
           }
-        }).catch(
-          error => console.log(error)
-        );
+        }).catch(error => {
+          alert('Occuring some error on register process.', 'Error is happen!');
+        });
       }
-      registBtn.addEventListener('click', register);
     </script>
   </body>
 </html>
