@@ -23,23 +23,23 @@ def post_files():
         files = request.files.getlist('file')
         if len(files) <= 0:
             raise BadRequest('No uploaded file.')
-        
+
         try:
             for file in files:
                 logger.info(file.filename)
                 # 
                 # The API functions body is coding here.
                 # 
-        
+
         except Exception as e:
             logger.error(f'Internal process was failed : {str(e)}')
             raise InternalServerError('Internal process was failed.')
-        
+
         response_json = jsonify({'response': 'This is an api response data.'})
         status_code = 200
-        
+
     except Exception as e:
         response_json, status_code = get_exception_status_code(e)
-    
+
     logger.info('The process with a post file is completed.')
     return response_json, status_code
