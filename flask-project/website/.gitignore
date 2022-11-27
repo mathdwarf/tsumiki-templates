@@ -249,4 +249,5 @@ Unknown argument: Windows
 *.vsix
 
 
-Unknown argument: VisualStudioCode
+# Custom Ignore Objects
+*.sqlite
