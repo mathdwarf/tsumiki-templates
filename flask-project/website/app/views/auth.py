@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required, current_user
-from werkzeug.security import check_password_hash, generate_password_hash
+from flask_bcrypt import check_password_hash, generate_password_hash
 
 from ..models.db_manager import db_manager
 from ..models.user import User
@@ -18,7 +18,7 @@ def register():
         if user:
             return redirect(url_for('auth.register'))
 
-        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+        new_user = User(email=email, name=name, password=generate_password_hash(password))
         db_manager.add_user(new_user)
 
         return redirect(url_for('auth.login'))
