@@ -46,9 +46,12 @@
           headers: {},
           body: fData
         }).then(response => {
-          if (response.url != '') {
+          if (response.url.split('/').pop() === "{{url_for('auth.login')}}".split('/').pop()) {
             window.location.href = response.url;
             alert('Registering your account is completed!', 'Completed!');
+          }
+          else if (response.url.split('/').pop() === "{{url_for('auth.register')}}".split('/').pop()) {
+            alert('Your e-mail is already registered!', 'Already registered!');
           }
           else {
             alert('Occuring some error on register process.', 'Error is happen!');

@@ -21,7 +21,14 @@ class DBManager():
             self.__db.Column(self.__db.String(256))
 
     def add_user(self, user):
-        self.__db.session.add(user)
-        self.__db.session.commit()
+        is_success = False
+        try:
+            self.__db.session.add(user)
+            self.__db.session.commit()
+            is_success = True
+        except:
+            self.__db.session.rollback()
+            is_success = False
+        return is_success
 
 db_manager = DBManager()

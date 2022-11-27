@@ -19,9 +19,12 @@ def register():
             return redirect(url_for('auth.register'))
 
         new_user = User(email=email, name=name, password=generate_password_hash(password))
-        db_manager.add_user(new_user)
+        is_success = db_manager.add_user(new_user)
 
-        return redirect(url_for('auth.login'))
+        if is_success:
+            return redirect(url_for('auth.login'))
+        else:
+            return redirect('')
 
     else:
         return render_template('registration.html')
