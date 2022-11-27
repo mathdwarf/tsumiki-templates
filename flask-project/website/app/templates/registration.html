@@ -12,9 +12,9 @@
         <div><span>name : </span><input type="text" id="name" /></div>
         <div><span>Password : </span><input type="password" id="password" /></div>
         <div><span>Confirm Password : </span><input type="password" id="confirm" /></div>
-        <div><button id="registBtn" style="margin: 5px;">Registration</button></div>
+        <div><button id="registBtn">Registration</button></div>
       </form>
-      <div><a href="{{url_for('auth.login')}}" style="margin: 5px;">Move to login page.</a></div>
+      <button onclick="window.location.href='{{url_for('auth.login')}}';">Move to the login page</button>
     </div>
     <script>
       const email = document.getElementById('email');

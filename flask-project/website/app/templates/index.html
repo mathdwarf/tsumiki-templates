@@ -6,9 +6,9 @@
     <title>Main</title>
   </head>
   <body>
-    <div style="text-align:right; margin-right: 5px;">
+    <div style="text-align:right;">
       <p>{{name}}</p>
-      <a href="{{url_for('auth.logout')}}">Logout</a>
+      <button onclick="window.location.href='{{url_for('auth.logout')}}';">Log out</button>
     </div>
     <div>
       <p>This is the main page.</p>
