@@ -50,7 +50,11 @@ Third : create db before run.
 
     >>> from app import create_app
     >>> from app.models.db_manager import db_manager
-    >>> db_manager.create_db(create_app())
+    >>> app = create_app()
+    >>> db_manager.init_db(app)
+    >>> with app.app_context():
+    ...     db_manager.create_db()
+    >>> 
     >>> exit()
 
 Fourth : run.

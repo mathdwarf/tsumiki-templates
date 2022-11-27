@@ -7,8 +7,8 @@ class DBManager():
     def init_db(self, app):
         self.__db.init_app(app)
 
-    def create_db(self, app):
-        self.__db.create_all(app=app)
+    def create_db(self):
+        self.__db.create_all()
 
     def get_db_model(self):
         return self.__db.Model
