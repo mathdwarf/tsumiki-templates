@@ -72,4 +72,14 @@ If you can log in, following page is opened.
 
 [[main page] - http://localhost:5002/](http://localhost:5002/)  
 
+### 04-02. Issues
+
+#### In storage_manager using pymemcache
+
+Now, occuring the following error.
+
+    ConnectionRefusedError: [WinError 10061] No connection could be made because the target machine actively refused it.
+
+These are not solve yet.
+
 That's it. Enjoy!  
