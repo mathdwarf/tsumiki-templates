@@ -72,7 +72,7 @@ def post_json():
     except Exception as e:
         response_json, status_code = get_exception_status_code(e)
 
-    logger.info('The process with a post file is completed.')
+    logger.info('The process with a post json is completed.')
     return response_json, status_code
 
 @template_api.route("/post-files", methods=["POST"])
