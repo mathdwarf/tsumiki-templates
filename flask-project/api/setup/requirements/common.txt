@@ -1,6 +1,6 @@
 # requirements for all environments
-python-dotenv
-flask
-flask_cors
-Flask-Limiter
-waitress
+python-dotenv~=1.0.0
+flask~=2.2.3
+flask_cors~=3.0.10
+Flask-Limiter~=3.3.0
+waitress~=2.1.2
