@@ -9,7 +9,7 @@ def create_app():
     app.config['JSON_AS_ASCII'] = False
     app.config['RATELIMIT_HEADERS_ENABLED'] = True
     
-    limiter = Limiter(app, key_func=get_remote_address, default_limits=["100/day;50/hour;10/minute;1/second"])
+    limiter = Limiter(app, default_limits=["100/day;50/hour;10/minute;1/second"])
     limiter.limit("100/day;50/hour;10/minute;1/second")
 
     app.register_blueprint(template_api)

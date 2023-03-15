@@ -1,6 +1,25 @@
 # If using each command in this file, you need the extension "REST Client" on Visual Studio Code.
 
-POST http://localhost:5001/template/post
+GET http://localhost:5001/template/get
+
+###
+
+GET http://localhost:5001/template/get?param01=param01value&param02=param02value
+
+###
+
+POST http://localhost:5001/template/post-json
+Authorization: token PcwxgkfEP9xFBwHSCXQHaganSdjjmTGS
+Content-Type: application/json
+
+{
+    "key01" : "key01 value",
+    "key02" : "key02 value"
+}
+
+###
+
+POST http://localhost:5001/template/post-files
 Authorization: token PcwxgkfEP9xFBwHSCXQHaganSdjjmTGS
 Content-Type: multipart/form-data; boundary=----8fGjd595mVgUK9sMY5AMmT82sunURpaZ
 
@@ -11,11 +30,18 @@ Content-Type: application/octet-stream
 
 < ./01.jpg
 
+------8fGjd595mVgUK9sMY5AMmT82sunURpaZ
+
+Content-Disposition: form-data; name="file"; filename="02.jpg"
+Content-Type: application/octet-stream
+
+< ./01.jpg
+
 ------8fGjd595mVgUK9sMY5AMmT82sunURpaZ--
 
 ###
 
-POST http://localhost:5001/template/post
+POST http://localhost:5001/template/post-files
 Authorization: token PcwxgkfEP9xFBwHSCXQHaganSdjjmTGS
 Content-Type: multipart/form-data; boundary=----8fGjd595mVgUK9sMY5AMmT82sunURpaZ
 
