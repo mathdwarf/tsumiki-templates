@@ -2,6 +2,8 @@ from flask import Flask
 from flask_limiter import Limiter
 from flask_login import LoginManager
 
+from .api.template_api import template_api
+
 from .views.main import main
 from .views.auth import auth
 # from .models.storage_manager import storage_manager
@@ -23,6 +25,8 @@ def create_app():
     limiter = Limiter(app, default_limits=["100/day;50/hour;10/minute;1/second"])
     limiter.limit("100/day;50/hour;10/minute;1/second")
 
+    app.register_blueprint(template_api)
+    
     app.register_blueprint(main)
     app.register_blueprint(auth)
 
