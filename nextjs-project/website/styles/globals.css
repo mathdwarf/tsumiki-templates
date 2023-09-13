@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+@layer components {
+  .pagetitle {
+    @apply mt-2 mb-8 px-6 py-2 text-[4.5vw] font-bold text-black
+  }
+  .textbox {
+    @apply rounded-full w-[24vw] mx-1 my-2 px-6 py-2 text-[1.2vw] font-bold border-black border-2 bg-white text-black
+  }
+  .button-bg {
+    @apply rounded-full mx-1 my-2 px-6 pt-0.5 pb-1.5 font-bold border-black border-4 bg-black text-white hover:bg-white hover:text-black hover:scale-95 hover:transition-all;
+  }
+  .button-sm {
+    @apply rounded-lg mx-1 my-2 px-4 py-2 font-medium border-black border-4 bg-black text-white hover:bg-white hover:text-black hover:transition-all;
+  }
+}
