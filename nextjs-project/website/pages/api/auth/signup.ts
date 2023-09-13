@@ -1,45 +1,75 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import NextAuth, { User } from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import executeQuery from '../../../lib/mysql'
 const escape = require('sql-template-strings')
 const bcrypt = require('bcrypt')
 
-type ResponseData = { status: number, message: string }
+export interface CustomUser extends User {
+  role?: string | null;
+}
 
-const signUpHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  let resData: ResponseData = { status: 500, message: 'Error occured on sign up.' }
-  try {
-    if (req.method !== "POST") {
-      throw({ status: 405, message: 'Method not allowed.' })
-    }
-    const { email, password, confirm, role } = JSON.parse(req.body)
-
-    const queryGetPW = escape`select password from credentials where email = ${email}`
-    const queryGetPwResults = await executeQuery(queryGetPW) as {password: string}[]
-    if (queryGetPwResults.length > 0) {
-      throw({ status: 400, message: 'The e-mail address is already registered.' })
-    }
-
-    if (password != confirm) {
-      throw({ status: 400, message: 'The password and cofnirm-password is invalid.' })
-    }
-
-    var salt = bcrypt.genSaltSync(10)
-    var hash = bcrypt.hashSync(password, salt)
-    const queryGetUser = escape`insert into credentials (email,password,role) values (${email}, ${hash}, ${role})`
-    await executeQuery(queryGetUser)
-    resData = { status: 200, message: 'Sign up is completed.' }
-  }
-  catch (e: any) {
-    console.log('Sign up is failed.')
-    console.log(e)
-    if((e.status !== undefined) && (e.message !== undefined)) {
-      return res.status(e.status).end(e.message)
+const findUserByCredentials = async (credentials: {email: string, password: string}) => {
+  const queryGetPW = escape`select password from credentials where email = ${credentials.email}`
+  const queryGetPwResults = await executeQuery(queryGetPW) as {password: string}[]
+  let retCredentials: CustomUser | null = null
+  if (queryGetPwResults.length > 0) {
+    const isPassed = bcrypt.compareSync(credentials.password, queryGetPwResults[0].password)
+    if (isPassed) {
+      const queryGetUser = escape`select email,role from credentials where email = ${credentials.email}`
+      const queryGetUserResults = await executeQuery(queryGetUser) as {id:number,email:string,role:string}[]
+      if((queryGetUserResults!==null) && (typeof(queryGetUserResults) === 'object') && (Object.keys(queryGetUserResults).length === 1)) {
+        retCredentials = { id: queryGetUserResults[0].email, email: queryGetUserResults[0].email, role: queryGetUserResults[0].role }
+      }
+      else {
+        // Do Nothing.
+      }
     }
     else {
-      return res.status(500).end('Error occured on sign up.')
+      // Do Nothing.
     }
   }
-  console.log(resData)
-  return res.status(resData.status).json(resData)
+  else {
+    // Do Nothing.
+  }
+  return retCredentials
 }
-export default signUpHandler
+
+export default NextAuth({
+  providers: [
+    CredentialsProvider({
+      id: "credentials",
+      name: "credentials",
+      credentials: {
+        email: { label: 'E-Mail', type: 'text', placeholder: 'E-Mail' },
+        password: { label: 'Password', type: 'password' }
+      },
+      authorize: async (credentials) => {
+        const credentialsData = {
+          email: (credentials?.email) ? credentials?.email : '',
+          password: (credentials?.password) ? credentials?.password : ''
+        }
+        const credentialsResult = await findUserByCredentials(credentialsData)
+        return credentialsResult
+      }
+    })
+  ],
+  callbacks: {
+    async session({ session, token }) {
+      session.user = token.user as CustomUser
+      return session
+    },
+    async jwt({token, user}) {
+        if (user) {
+            token.accessToken = user.id;
+            token.user = user;
+        }
+        return token;
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/login",
+    signOut: "/login"
+  },
+  debug: process.env.NODE_ENV === "development"
+})
