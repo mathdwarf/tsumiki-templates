@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import type { Session } from 'next-auth'
 import { getSession, signOut } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
+import Header from '../components/header'
 
 export const getServerSideProps: GetServerSideProps<{ session: Session | null }>
   = async (context: CtxOrReq | undefined) => {
@@ -51,6 +52,7 @@ const ChangePassword: NextPage = (props: any) => {
   if (props.session) {
     return (
       <>
+        <Header title={props.title} router={router} session={props.session} prefix={props.prefix} />
         <div className='pagetitle'>Change Password</div>
         <form className='w-[40vw] mx-[30vw]' onSubmit={handleSubmit(chagePassword)}>
           <div className='flex justify-between'><label className='pt-3.5'>Current Password:</label><input className='textbox' type='password' placeholder='Current Password' {...register('currentPassword')} /></div>

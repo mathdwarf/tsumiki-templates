@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { getCsrfToken, getSession, signIn } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
 import { useForm } from 'react-hook-form'
+import Header from '../components/header'
 
 export const getServerSideProps = async (context: CtxOrReq | undefined) => {
   const prefix = (process.env.ASCC_PREFIX) ? process.env.ASCC_PREFIX: ''
@@ -36,13 +37,13 @@ const Login: NextPage = (props: any) => {
       if (res?.error) {
         setError('E-Mail,Passwordを正しく入力してください')
       } else {
-        router.push('/member-page')
+        router.push('/main')
       }
     })
   }
   useEffect(() => {
     if (props.session) {
-      router.replace('/member-page')
+      router.replace('/main')
     }
   }, [props.session, router])
   if (props.session) {
@@ -51,6 +52,7 @@ const Login: NextPage = (props: any) => {
   else {
     return (
       <>
+        <Header title={props.title} router={router} session={props.session} prefix={props.prefix} />
         <div className='pagetitle'>Login</div>
         <form className='w-[40vw] mx-[30vw]' onSubmit={handleSubmit(signInUser)}>
           <input name='csrfToken' type='hidden' defaultValue={props.csrfToken} />

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import type { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
+import Header from '../components/header'
 
 export const getServerSideProps: GetServerSideProps<{ session: Session | null }>
   = async (context: CtxOrReq | undefined) => {
@@ -33,7 +34,7 @@ const SignUp: NextPage = (props: any) => {
       router.replace('/login')
     }
     else if (props.session.user.role != 'admin') {
-      router.replace('/member-page')
+      router.replace('/main')
     }
   }, [props.session, router])
   if ((props.session) && (props.session.user.role == 'admin')) {
@@ -53,6 +54,7 @@ const SignUp: NextPage = (props: any) => {
   
     return (
       <>
+        <Header title={props.title} router={router} session={props.session} prefix={props.prefix} />
         <div className='pagetitle'>Sign Up</div>
         <form className='w-[40vw] mx-[30vw]' onSubmit={handleSubmit(signUpUser)}>
           <div className='flex justify-between'><label className='pt-3.5'>E-Mail:</label><input className='textbox' type='text' placeholder='E-Mail' {...register('email')} /></div>
