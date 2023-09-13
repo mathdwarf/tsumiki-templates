@@ -1,36 +1,39 @@
 import { useEffect } from 'react'
-import { GetServerSideProps } from 'next'
+import { NextPage, GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import type { Session } from 'next-auth'
-import { getSession, signOut } from 'next-auth/react'
+import { getSession } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
 
 export const getServerSideProps: GetServerSideProps<{ session: Session | null }>
   = async (context: CtxOrReq | undefined) => {
-  return {
+    const prefix = (process.env.ASCC_PREFIX) ? process.env.ASCC_PREFIX: ''
+    return {
     props: {
-      title: 'main',
+      title: 'member-page',
+      prefix: prefix,
       session: await getSession(context)
     }
   }
 }
 
-const Main = (props: any) => {
+const Main: NextPage = (props: any) => {
   const router = useRouter()
+  useEffect(() => { 
+    if (!props.session) {
+      router.replace('/login')
+    }
+  }, [props.session, router])
   if (props.session) {
     return (
-      <div style={{ textAlign: 'center' }}>
-        <div>
-          <div>Main Page</div>
-          <div><button onClick={() => {router.push('/change-password')}}>Change Password</button></div>
-          {(props.session.user.role === 'admin') && <div><button onClick={() => {router.push('/admin-panel')}}>Admin Panel</button></div>}
-          <div><button onClick={() => {signOut({callbackUrl: '/login'})}}>Logout</button></div>
-        </div>
-      </div>
+      <>
+        <div className='pagetitle'>Main Page</div>
+        <button className='button-bg' onClick={() => { router.push('/change-password') }}>Change Password</button>
+      </>
     )
   }
   else {
-    useEffect(() => { router.replace('/login') }, [])
+    return null
   }
 }
 

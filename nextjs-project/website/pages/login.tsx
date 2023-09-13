@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
+import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import type { Session } from 'next-auth'
 import { getCsrfToken, getSession, signIn } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
 import { useForm } from 'react-hook-form'
 
 export const getServerSideProps = async (context: CtxOrReq | undefined) => {
+  const prefix = (process.env.ASCC_PREFIX) ? process.env.ASCC_PREFIX: ''
   return {
     props: {
       title: 'login',
+      prefix: prefix,
       csrfToken: await getCsrfToken(context),
       session: await getSession(context)
     }
@@ -20,7 +22,7 @@ interface IFormValues {
   password?: string
 }
 
-const Login = (props: any) => {
+const Login: NextPage = (props: any) => {
   const router = useRouter()
   const [error, setError] = useState('')
   const { register, handleSubmit } = useForm<IFormValues>()
@@ -34,43 +36,30 @@ const Login = (props: any) => {
       if (res?.error) {
         setError('E-Mail,Passwordを正しく入力してください')
       } else {
-        router.push('/main')
+        router.push('/member-page')
       }
     })
   }
+  useEffect(() => {
+    if (props.session) {
+      router.replace('/member-page')
+    }
+  }, [props.session, router])
   if (props.session) {
-    useEffect(() => { router.replace('/main') }, [])
+    return null
   }
   else {
     return (
-      <div style={{ textAlign: 'center' }}>
-        <form onSubmit={handleSubmit(signInUser)}>
+      <>
+        <div className='pagetitle'>Login</div>
+        <form className='w-[40vw] mx-[30vw]' onSubmit={handleSubmit(signInUser)}>
           <input name='csrfToken' type='hidden' defaultValue={props.csrfToken} />
-          <div style={{ marginTop: '15px' }}>
-            <input
-              type='text'
-              placeholder='E-Mail'
-              {...register('email')}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor='password'></label>
-            <input
-              type='password'
-              placeholder='Password'
-              {...register('password', {
-                setValueAs: (value) => (value)
-              })}
-            ></input>
-          </div>
-          <p>
-            <span style={{ color: 'red' }}>{error}</span>
-          </p>
-          <div>
-            <input style={{ width: '250px' }} type='submit' />
-          </div>
+          <div className='flex justify-between'><label className='pt-3.5'>E-Mail:</label><input className='textbox' type='text' placeholder='E-Mail' {...register('email')} /></div>
+          <div className='flex justify-between'><label className='pt-3.5'>Password:</label><input className='textbox' type='password' placeholder='Password' {...register('password', { setValueAs: (value) => (value) })} /></div>
+          <div><p className='text-red-600'>{error}</p></div>
+          <div><input className='button-bg' type='submit' value="Login" /></div>
         </form>
-      </div>
+      </>
     )
   }
 }

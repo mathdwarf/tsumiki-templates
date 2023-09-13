@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { GetServerSideProps } from 'next'
+import { NextPage, GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import type { Session } from 'next-auth'
 import { getSession, signOut } from 'next-auth/react'
@@ -8,9 +8,11 @@ import { CtxOrReq } from 'next-auth/client/_utils'
 
 export const getServerSideProps: GetServerSideProps<{ session: Session | null }>
   = async (context: CtxOrReq | undefined) => {
+  const prefix = (process.env.ASCC_PREFIX) ? process.env.ASCC_PREFIX: ''
   return {
     props: {
-      title: 'main',
+      title: 'change-password',
+      prefix: prefix,
       session: await getSession(context)
     }
   }
@@ -23,7 +25,7 @@ interface IFormValues {
   confirmPassword: string
 }
 
-const ChangePassword = (props: any) => {
+const ChangePassword: NextPage = (props: any) => {
   const { register, handleSubmit } = useForm<IFormValues>()
   const chagePassword = async (data: IFormValues) => {
     data.email = props.session.user.email
@@ -41,46 +43,26 @@ const ChangePassword = (props: any) => {
     }
   }
   const router = useRouter()
+  useEffect(() => { 
+    if (!props.session) {
+      router.replace('/login')
+    }
+  }, [props.session, router])
   if (props.session) {
     return (
-      <div style={{ textAlign: 'center' }}>
-        <div>Change Password Page</div>
-        <form onSubmit={handleSubmit(chagePassword)}>
-          <div>
-            <label htmlFor='currentPassword'></label>
-            <input
-              type='password'
-              placeholder='Current Password'
-              {...register('currentPassword')}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor='newPassword'></label>
-            <input
-              type='password'
-              placeholder='New Password'
-              {...register('newPassword')}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor='confirmPassword'></label>
-            <input
-              type='password'
-              placeholder='Confirm Password'
-              {...register('confirmPassword')}
-            ></input>
-          </div>
-          <div>
-            <input style={{ width: '250px' }} type='submit' />
-          </div>
+      <>
+        <div className='pagetitle'>Change Password</div>
+        <form className='w-[40vw] mx-[30vw]' onSubmit={handleSubmit(chagePassword)}>
+          <div className='flex justify-between'><label className='pt-3.5'>Current Password:</label><input className='textbox' type='password' placeholder='Current Password' {...register('currentPassword')} /></div>
+          <div className='flex justify-between'><label className='pt-3.5'>New Password:</label><input className='textbox' type='password' placeholder='New Password' {...register('newPassword')} /></div>
+          <div className='flex justify-between'><label className='pt-3.5'>New Password Confirm:</label><input className='textbox' type='password' placeholder='New Password Confirm' {...register('confirmPassword')} /></div>
+          <div><input className='button-bg' type='submit' value="Update" /></div>
         </form>
-        <div><button onClick={() => { router.push('/main')}}>Main Page</button></div>
-        <div><button onClick={() => { signOut({callbackUrl: '/login'}) }}>Logout</button></div>
-      </div>
+      </>
     )
   }
   else {
-    useEffect(() => { router.replace('/login') }, [])
+    return null
   }
 }
 

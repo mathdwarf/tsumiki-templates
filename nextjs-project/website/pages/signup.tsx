@@ -1,16 +1,18 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { GetServerSideProps } from 'next'
+import { NextPage, GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import type { Session } from 'next-auth'
-import { getSession, signOut } from 'next-auth/react'
+import { getSession } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
 
 export const getServerSideProps: GetServerSideProps<{ session: Session | null }>
   = async (context: CtxOrReq | undefined) => {
-  return {
+    const prefix = (process.env.ASCC_PREFIX) ? process.env.ASCC_PREFIX: ''
+    return {
     props: {
       title: 'signup',
+      prefix: prefix,
       session: await getSession(context)
     }
   }
@@ -23,10 +25,18 @@ interface IFormValues {
   role: string
 }
 
-const SignUp = (props: any) => {
+const SignUp: NextPage = (props: any) => {
   const router = useRouter()
-  if (props.session.user.role === 'admin') {
-    const { register, handleSubmit } = useForm<IFormValues>()
+  const { register, handleSubmit } = useForm<IFormValues>()
+  useEffect(() => { 
+    if(!props.session) {
+      router.replace('/login')
+    }
+    else if (props.session.user.role != 'admin') {
+      router.replace('/member-page')
+    }
+  }, [props.session, router])
+  if ((props.session) && (props.session.user.role == 'admin')) {
     const signUpUser = async (data: IFormValues) => {
       const response = await fetch(
         '/api/auth/signup',
@@ -42,52 +52,20 @@ const SignUp = (props: any) => {
     }
   
     return (
-      <div style={{ textAlign: 'center' }}>
-        <div>Sign Up</div>
-        <form onSubmit={handleSubmit(signUpUser)}>
-          <div style={{ marginTop: '15px' }}>
-            <input
-              type='text'
-              placeholder='E-Mail'
-              {...register('email')}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor='password'></label>
-            <input
-              type='password'
-              placeholder='Password'
-              {...register('password')}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor='confirm'></label>
-            <input
-              type='password'
-              placeholder='Confirm password'
-              {...register('confirm')}
-            ></input>
-          </div>
-          <div>
-            <label htmlFor='role'></label>
-            <input
-              type='text'
-              placeholder='Role(user, admin)'
-              {...register('role')}
-            ></input>
-          </div>
-          <div>
-            <input style={{ width: '250px' }} type='submit' />
-          </div>
+      <>
+        <div className='pagetitle'>Sign Up</div>
+        <form className='w-[40vw] mx-[30vw]' onSubmit={handleSubmit(signUpUser)}>
+          <div className='flex justify-between'><label className='pt-3.5'>E-Mail:</label><input className='textbox' type='text' placeholder='E-Mail' {...register('email')} /></div>
+          <div className='flex justify-between'><label className='pt-3.5'>Password:</label><input className='textbox' type='password' placeholder='Password' {...register('password')} /></div>
+          <div className='flex justify-between'><label className='pt-3.5'>Password Confirm:</label><input className='textbox' type='password' placeholder='Password Confirm' {...register('confirm')} /></div>
+          <div className='flex justify-between'><label className='pt-3.5'>Role(user, admin):</label><input className='textbox' type='text' placeholder='Role(user, admin)' {...register('role')} /></div>
+          <div><input className='button-bg' type='submit' value="Send" /></div>
         </form>
-        <div><button onClick={() => { router.push('/main') }}>Main Page</button></div>
-        <div><button onClick={() => { router.push('/signup') }}>Sign Up Page</button></div>
-        <div><button onClick={() => { signOut({callbackUrl: '/login'}) }}>Logout</button></div>
-      </div>
+      </>
     )
   }
   else {
-    useEffect(() => { router.replace('/main') }, [])
+    return null
   }
 }
 

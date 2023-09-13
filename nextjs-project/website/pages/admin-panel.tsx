@@ -1,43 +1,47 @@
 import { useEffect } from 'react'
-import { GetServerSideProps } from 'next'
+import { NextPage, GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import type { Session } from 'next-auth'
-import { getSession, signOut } from 'next-auth/react'
+import { getSession } from 'next-auth/react'
 import { CtxOrReq } from 'next-auth/client/_utils'
 
 export const getServerSideProps: GetServerSideProps<{ session: Session | null }>
   = async (context: CtxOrReq | undefined) => {
+  const prefix = (process.env.ASCC_PREFIX) ? process.env.ASCC_PREFIX: ''
   return {
     props: {
       title: 'admin-panel',
+      prefix: prefix,
       session: await getSession(context)
     }
   }
 }
 
-const AdminPanel = (props: any) => {
+const AdminPanel: NextPage = (props: any) => {
   const router = useRouter()
+  useEffect(() => {
+    if (!props.session) {
+      router.replace('/login')
+    }
+    else if (props.session.user.role != 'admin') {
+      router.replace('/member-page')
+    }
+  }, [props.session, router])
   if (props.session) {
     if (props.session.user.role === 'admin') {
       return (
-        <div style={{ textAlign: 'center' }}>
-          <div>
-            <div>Admin-Panel</div>
-            <div><button onClick={() => { router.push('/main') }}>Main Page</button></div>
-            <div><button onClick={() => { router.push('/signup') }}>Sign Up Page</button></div>
-            <div><button onClick={() => { signOut({callbackUrl: '/login'}) }}>Logout</button></div>
-          </div>
-        </div>
+        <>
+          <div className='pagetitle'>Admin-Panel</div>
+          <button className='button-bg' onClick={() => { router.push('/signup') }}>Sign Up Page</button>
+        </>
       )
     }
     else {
-      useEffect(() => { router.replace('/main') }, [])
+      return null
     }
   }
   else {
-    return (
-      useEffect(() => { router.replace('/login') }, [])
-    )
+    return null
   }
 }
 
